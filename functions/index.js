@@ -78,10 +78,13 @@ exports.auth = functions.https.onRequest(async (request, response) => {
 
     //extract top headline from newsAPI 
     const theNews = await axios.get(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${newskey}`)
-    console.log(theNews.data.length)
-    // const rand = Math.floor(Math.random() * theNews.data.length)
+    console.log(theNews.data.articles.length)
+    // const rand = 
     // console.log(rand)
-    const resultsAmount = await theNews.data.totalResults
+    //newsAPIs 'totalResults' amount does not seem to always be accurate. Sometimes there are fewer results the claimed. 
+    const resultsAmount = Math.floor(Math.random() * theNews.data.articles.length)
+    // const resultsAmount = await theNews.data.length
+    
     const articleNum = Math.floor(Math.random() * resultsAmount)
     console.log(resultsAmount)
     console.log(articleNum)
