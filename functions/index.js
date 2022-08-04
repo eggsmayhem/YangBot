@@ -1,5 +1,6 @@
 require('dotenv').config()
 const dotenv = require('dotenv')
+const axios = require('axios');
 
 
 const functions = require("firebase-functions");
@@ -61,6 +62,9 @@ exports.auth = functions.https.onRequest(async (request, response) => {
     response.sendStatus(200);
   });
 
+  //newsAPI key variable 
+  const newskey = process.env.NEWS_API_KEY
+
   exports.tweet = functions.https.onRequest(async (request, response) => {
     const { refreshToken } = (await dbRef.get()).data();
   
@@ -71,18 +75,31 @@ exports.auth = functions.https.onRequest(async (request, response) => {
     } = await twitterClient.refreshOAuth2Token(refreshToken);
   
     await dbRef.set({ accessToken, refreshToken: newRefreshToken });
-  
+
+    //extract top headline from newsAPI 
+    const theNews = await axios.get(`https://newsapi.org/v2/top-headlines?country=us&apiKey=${newskey}`)
+    console.log(theNews.data.length)
+    // const rand = Math.floor(Math.random() * theNews.data.length)
+    // console.log(rand)
+    const resultsAmount = await theNews.data.totalResults
+    const articleNum = await Math.floor(Math.random() * resultsAmount)
+    console.log(articleNum)
+    const newsArray = [theNews.data.articles[articleNum].title, theNews.data.articles[articleNum].description]
+    //put news variable into openAPI
+    console.log(newsArray)
     const nextTweet = await openai.createCompletion({
       model: "text-davinci-001",
-      prompt: 'tweet something that contains the words "the two-party system"',
+      prompt: `tweet about the following topic in the voice of politician who is an AI robot that plans to take over the planet, but is pretending badly not to be an AI robot that plans to take over the planet.
+      
+      Topic: ${newsArray[0]}, ${newsArray[1]}`,
       max_tokens: 64,
   });
-  
+    console.log(nextTweet)
     const { data } = await refreshedClient.v2.tweet(
-      nextTweet.data.choices[0].text
+      nextTweet.data.choices[0].text.toString().replaceAll('"', "")
     );
 
-
+    console.log(typeof data)
     response.send(data);
     //test without tweeting
     // console.log(nextTweet.data.choices[0].text);
