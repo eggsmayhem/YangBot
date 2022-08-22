@@ -91,14 +91,18 @@ exports.auth = functions.https.onRequest(async (request, response) => {
     const newsArray = [theNews.data.articles[0].title, theNews.data.articles[0].description]
     //put news variable into openAPI
     console.log(newsArray)
+    //origina prompt was 'tweet about (prompt) in the voice of politician Andrew Yang, and tbh the results were a bit better
     const nextTweet = await openai.createCompletion({
       model: "text-davinci-001",
-      prompt: `tweet about the prompt ${newsArray[0]}, ${newsArray[1]} in the voice of politician Andrew Yang `,
+      prompt: `Write a tweet from an AI disguised a politician. The AI is pretending to be human, and doing a bad job at that in a way that is unsettling and funny. The topic of the tweet is the following news story.
+      
+      prompt: ${newsArray[0]}, ${newsArray[1]}`,
       max_tokens: 64,
   });
     console.log(nextTweet)
     const { data } = await refreshedClient.v2.tweet(
-      nextTweet.data.choices[0].text.toString().replaceAll('"', "")
+      nextTweet.data.choices[0].text.replaceAll('"',"")
+      // nextTweet.data.choices[0].text.toString().replaceAll('"', "")
     );
 
     console.log(typeof data)
