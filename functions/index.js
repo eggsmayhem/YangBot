@@ -82,13 +82,14 @@ exports.auth = functions.https.onRequest(async (request, response) => {
     // const rand = 
     // console.log(rand)
     //newsAPIs 'totalResults' amount does not seem to always be accurate. Sometimes there are fewer results the claimed. 
-    const resultsAmount = Math.floor(Math.random() * theNews.data.articles.length)
+    // const resultsAmount = Math.floor(Math.random() * theNews.data.articles.length)
+    const resultsAmount = await theNews.data.articles.length
     // const resultsAmount = await theNews.data.length
     
     const articleNum = Math.floor(Math.random() * resultsAmount)
     console.log(resultsAmount)
     console.log(articleNum)
-    const newsArray = [theNews.data.articles[0].title, theNews.data.articles[0].description]
+    const newsArray = [theNews.data.articles[articleNum].title, theNews.data.articles[articleNum].description]
     //put news variable into openAPI
     console.log(newsArray)
     //origina prompt was 'tweet about (prompt) in the voice of politician Andrew Yang, and tbh the results were a bit better
