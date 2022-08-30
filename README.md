@@ -1,5 +1,7 @@
 # Yangbot
 
+!['test'](https://github.com/eggsmayhem/Yangbot/blob/main/promotional/termyang.png)
+
 Based on foundation https://github.com/fireship-io/gpt3-twitter-bot by codediodeio
 
 Here he is in all his glory:
